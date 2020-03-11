@@ -12,14 +12,50 @@ export default class LoginComponent extends Component {
     this.state = {
       usernameInput: '',
       passwordInput: '',
+      showModal: true,
+      error: false,
     }
 
     this.handleUsernameInputChange = this.handleUsernameInputChange.bind(this);
     this.handlePasswordInputChange = this.handlePasswordInputChange.bind(this);
+    this.login = this.login.bind(this);
+    this.setShowModal = this.setShowModal.bind(this);
   }
 
   login() {
-    fetch()
+    this.setShowError(false);
+
+    const fetchData = {
+      method: 'POST',
+      body: JSON.stringify({
+        username: this.state.usernameInput,
+        password: this.state.passwordInput,
+      }),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    };
+
+    fetch('/api/users/login', fetchData)
+      .then(res => {
+        if (res.status !== 200) {
+          this.setShowError(true);
+          return;
+        }
+        console.log(res);
+        this.props.onLogin();
+      });
+  }
+
+  setShowError(show) {
+    // this.state.error = show;
+    this.setState({...this.state, error: show});
+  }
+
+  setShowModal(show) {
+    // this.state.showModal = show;
+    this.setState({...this.state, showModal: show});
   }
 
   handleUsernameInputChange(e) {
@@ -31,6 +67,14 @@ export default class LoginComponent extends Component {
   }
 
   render() {
+    const errorUi = (
+      <Row>
+        <Col>
+          <p className="text-danger">Login failed.</p>
+        </Col>
+      </Row>
+    );
+
     return (
       <Container style={{ marginTop: '2rem' }}>
         <Row>
@@ -63,6 +107,7 @@ export default class LoginComponent extends Component {
                       <Button onClick={this.login}>Login</Button>
                     </Col>
                   </Row>
+                  { this.state.error ? errorUi : <></>}
                 </Container>
               </Card.Body>
             </Card>

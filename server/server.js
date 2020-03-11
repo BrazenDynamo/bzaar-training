@@ -1,4 +1,5 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const next = require('next');
 const apiRouter = require('./api');
 
@@ -11,6 +12,7 @@ const handle = app.getRequestHandler();
 
 // Inject express body parsing middleware
 server.use(express.json());
+server.use(cookieParser());
 
 app.prepare().then(() => {
   server.use('/api', apiRouter);
