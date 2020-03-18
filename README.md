@@ -4,8 +4,10 @@ Download all the required packages:
 `yarn install`
 
 Initialize the database (make sure MySQL is running!):
-```npx sequelize-cli db:create
-npx sequelize-cli db:seed:all```
+```
+npx sequelize-cli db:create
+npx sequelize-cli db:seed:all
+```
 
 Start the server:
 `yarn dev`
