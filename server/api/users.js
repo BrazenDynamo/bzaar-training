@@ -46,5 +46,10 @@ module.exports = (router) => {
     }
   });
 
+  userRouter.post('/logout', (req, res) => {
+    res.cookie('bzaartraining_id_token', '', { expires: new Date(Date.now() - 1), httpOnly: true });
+    res.sendStatus(200);
+  })
+
   router.use('/users', userRouter);
 }

@@ -12,10 +12,22 @@ function Page(props) {
   const [showLoggedIn, setLoggedIn] = useState(props.loggedIn);
   const [username, setUsername] = useState(props.username || '');
   const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
   function loginSuccessHandler(userstate) {
+    setModalMessage('Login success!');
     setShowModal(true);
     setUsername(userstate.username);
+  }
+
+  function logoutSuccessHandler() {
+    setLoggedIn(false);
+    setUsername('');
+  }
+
+  function logoutFailureHandler() {
+    setModalMessage('Logout failed.');
+    setShowModal(true);
   }
 
   const loggedInView = (
@@ -27,7 +39,10 @@ function Page(props) {
       </Row>
       <Row>
         <Col className="text-center">
-          <LogoutButtonComponent onLogout={() => setLoggedIn(false)}></LogoutButtonComponent>
+          <LogoutButtonComponent
+            onLogout={logoutSuccessHandler}
+            onLogoutFail={logoutFailureHandler}
+          ></LogoutButtonComponent>
         </Col>
       </Row>
     </Container>
@@ -50,7 +65,7 @@ function Page(props) {
     { showLoggedIn ? loggedInView : <LoginComponent onLogin={loginSuccessHandler}></LoginComponent> }
     <Modal show={showModal} onHide={closeModal}>
       <Modal.Body>
-        Login success!
+        {modalMessage}
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={closeModal}>Close</Button>
