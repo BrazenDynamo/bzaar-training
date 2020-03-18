@@ -16,24 +16,34 @@ module.exports = (router) => {
         if (!!user && req.body.password === user.password) {
           // Generate JWT
           const token = jwt.sign({ userId: user.id, username: user.userName }, config.secret);
-          res.cookie('bzaartraining_id_token', token, { expires: new Date(Date.now() + 36000), httpOnly: true });
+          res.cookie('bzaartraining_id_token', token, { expires: new Date(Date.now() + 3600000), httpOnly: true });
+
           return res.status(200).send({ userId: user.id, token });
         } else {
           return res.sendStatus(401);
         }
       });
   });
-  // TODO: use auth header instead of cookie
+
   userRouter.post('/verify-login', (req, res) => {
-    const authHeader = req.headers.authorization ? req.headers.authorization.split(' ') : null;
-    const token = authHeader[1] || (req.cookies && req.cookies['bzaartraining_id_token']);
-    jwt.verify(token, config.secret, (e, decoded) => {
-      if (e) {
-        res.sendStatus(401);
-        return;
+    let authHeader;
+    if (req.headers.authorization) {
+      const header = req.headers.authorization.split(' ');
+      if (/Bearer/.test(header[0])) {
+        authHeader = header[1];
       }
-      res.json({ userId: user.id, username: user.userName, token });
-    });
+    }
+    const token = authHeader || (req.cookies ? req.cookies['bzaartraining_id_token'] : null);
+    if (!token) {
+      res.sendStatus(401);
+      return;
+    }
+    try {
+      const { userId, username } = jwt.verify(token, config.secret);
+      res.json({ userId, username });
+    } catch (e) {
+      res.sendStatus(401);
+    }
   });
 
   router.use('/users', userRouter);

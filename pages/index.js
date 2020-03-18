@@ -10,17 +10,19 @@ import LogoutButtonComponent from '../components/LogoutButtonComponent';
 
 function Page(props) {
   const [showLoggedIn, setLoggedIn] = useState(props.loggedIn);
+  const [username, setUsername] = useState(props.username || '');
   const [showModal, setShowModal] = useState(false);
 
-  function loginSuccessHandler() {
+  function loginSuccessHandler(userstate) {
     setShowModal(true);
+    setUsername(userstate.username);
   }
 
   const loggedInView = (
     <Container className="mt-5">
       <Row className="mb-3">
         <Col className="text-center">
-          Welcome, {props.username}!
+          Welcome, {username}!
         </Col>
       </Row>
       <Row>
@@ -58,14 +60,13 @@ function Page(props) {
   );
 }
 
-// broken
 Page.getInitialProps = async function(context) {
   const fetch = require('node-fetch');
 
   const response = await fetch('http://localhost:8080/api/users/verify-login', {
     method: 'POST',
     headers: {
-      'Authorization': context.req.headers.authorization,
+      'Authorization': `Bearer ${context.req.cookies['bzaartraining_id_token']}`,
     },
   });
 

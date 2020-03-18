@@ -40,11 +40,23 @@ export default class LoginComponent extends Component {
     fetch('/api/users/login', fetchData)
       .then(res => {
         if (res.status !== 200) {
-          this.setShowError(true);
-          return;
+          throw new Error();
         }
-        console.log(res);
-        this.props.onLogin();
+        return fetch('/api/users/verify-login', {
+          method: 'POST',
+        });
+      })
+      .then(res => {
+        if (res.status !== 200) {
+          throw new Error();
+        }
+        return res.json();
+      })
+      .then(({ username }) => {
+        this.props.onLogin({ username });
+      })
+      .catch(e => {
+        this.setShowError(true);
       });
   }
 
