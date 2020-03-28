@@ -78,7 +78,7 @@ function Page(props) {
 Page.getInitialProps = async function(context) {
   const fetch = require('node-fetch');
 
-  const response = await fetch('http://localhost:8080/api/users/verify-login', {
+  const response = await fetch('http://localhost/api/users/verify-login', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${context.req.cookies['bzaartraining_id_token']}`,

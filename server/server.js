@@ -17,5 +17,5 @@ server.use(cookieParser());
 app.prepare().then(() => {
   server.use('/api', apiRouter);
   server.get('*', (req, res) => handle(req, res));
-  server.listen(8080);
+  server.listen(80);
 });
